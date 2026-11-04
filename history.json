@@ -1,3 +1,4 @@
-{"targets":[],
+{"targets":[{"key":"console","name":"Console and its database"},{"key":"site","name":"Website"},{"key":"signin","name":"Sign-in service"}],
 "entries":[
+{"at":"2026-11-04T00:53:54.517Z","checks":{"console":{"s":"up","c":200,"ms":824},"site":{"s":"up","c":200,"ms":240},"signin":{"s":"up","c":200,"ms":288}}}
 ]}
