@@ -1,0 +1,44 @@
+name: probe
+
+# GH 2948 — the external uptime probe and the status page, in the PUBLIC repository HBE-NETWORK/gridable-status
+# (this directory of the Gridable repo is its source; README.md says how it is published). Inert inside the
+# Gridable repo: GitHub runs only a repository's top-level .github/workflows.
+# Each run: probe.js asks every target once and appends to history.json, the history is committed (the commit is
+# the state, and keeps the repository active so GitHub does not disable the schedule), the site is deployed to
+# GitHub Pages, and the run fails when a target is down, which is GitHub's own email to whoever owns the schedule.
+# A public repository's Actions minutes are free. No secret is read: GITHUB_TOKEN commits and deploys.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: node probe.js history.json
+      - name: commit the history
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add history.json
+          git commit -q -m "probe $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: .
+      - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+      - run: node probe.js --fail-if-down history.json

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gridable status</title>
+<meta name="description" content="Whether Gridable is up, checked from outside its own servers, with 30 days of history.">
+<style>
+  :root { --bg: #ffffff; --text: #111418; --muted: #5b6470; --line: #e3e6ea; --up: #1f8a4c; --degraded: #b7791f; --down: #c53030; --none: #c9ced4; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0e1013; --text: #e8eaed; --muted: #9aa3ad; --line: #262a30; --none: #3a3f46; } }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .lead, .meta, footer { color: var(--muted); }
+  .target { border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-top: 16px; }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  h2 { font-size: 17px; margin: 0; }
+  .badge { font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 999px; border: 1px solid currentColor; }
+  .badge.s-up { color: var(--up); } .badge.s-degraded { color: var(--degraded); } .badge.s-down { color: var(--down); } .badge.s-none { color: var(--muted); }
+  .bars { display: flex; gap: 2px; margin: 12px 0 6px; }
+  .bar { flex: 1; height: 28px; border-radius: 2px; background: var(--none); }
+  .bar.s-up { background: var(--up); } .bar.s-degraded { background: var(--degraded); } .bar.s-down { background: var(--down); }
+  .meta { font-size: 13px; margin: 0; }
+  footer { font-size: 13px; margin-top: 28px; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Gridable status</h1>
+  <p class="lead">Checked about every ten minutes from GitHub's servers, not from Gridable's own, so this page stays up when Gridable is down. Each bar is one day (UTC); a day with any failed check shows that failure.</p>
+  <div id="targets"><p class="empty">Loading…</p></div>
+  <footer>
+    <p>The console check asks <code>gridable.ai/healthz</code>, which answers only after a query to the database. GitHub runs scheduled checks on a best-effort basis, so a gap of more than ten minutes between checks can happen.</p>
+    <p><a href="https://getgridable.com/trust#status">Gridable trust center</a></p>
+  </footer>
+</main>
+<script src="status.js"></script>
+<script>
+  fetch('history.json', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .then(function (h) { GridableStatus.render(document, document.getElementById('targets'), h, Date.now()); })
+    .catch(function () { document.getElementById('targets').textContent = 'The probe history could not be loaded.'; });
+</script>
+</body>
+</html>
