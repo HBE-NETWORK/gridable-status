@@ -28,10 +28,10 @@
 <body>
 <main>
   <h1>Gridable status</h1>
-  <p class="lead">Checked about every ten minutes from GitHub's servers, not from Gridable's own, so this page stays up when Gridable is down. Each bar is one day (UTC); a day with any failed check shows that failure.</p>
+  <p class="lead">Checked several times a day from GitHub's servers, not from Gridable's own, so this page stays up when Gridable is down. Each bar is one day (UTC); a day with any failed check shows that failure.</p>
   <div id="targets"><p class="empty">Loading…</p></div>
   <footer>
-    <p>The console check asks <code>gridable.ai/healthz</code>, which answers only after a query to the database. GitHub runs scheduled checks on a best-effort basis, so a gap of more than ten minutes between checks can happen.</p>
+    <p>The console check asks <code>gridable.ai/healthz</code>, which answers only after a query to the database. The checks are scheduled every ten minutes, but GitHub runs scheduled jobs on a best-effort basis and in practice they have come hours apart, so a short outage can be missed.</p>
     <p><a href="https://getgridable.com/trust#status">Gridable trust center</a></p>
   </footer>
 </main>
